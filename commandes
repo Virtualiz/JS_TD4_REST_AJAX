@@ -1,0 +1,9 @@
+prolunch.modules.itemManager.registerGetPlatDetailHandler(plat$, e)
+prolunch.modules.itemManager.registerBackToListHandler()
+
+prolunch.modules.itemManager.service.getResource(uri, callback)
+
+prolunch.modules.itemManager.view.displayPlat(data)
+prolunch.modules.itemManager.view.displayListe(data)
+
+prolunch.init(service_host)
