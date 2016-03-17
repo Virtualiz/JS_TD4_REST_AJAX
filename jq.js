@@ -38,13 +38,15 @@ prolunch.modules.itemManager = (function () {
                     /*var description = data.description;*/
                     var prix = data.prix;
                     var link_pic = data.photo.href;
-                    var res = "<div class=\"col-sm-6 col-md-4 col-lg-4\" id=\"" + id + "\"'> <div class=\"thumbnail\"> <img class=\"img-rounded img-responsive\" src=\"" + prolunch.link + link_pic + "\" alt=\"...\"> <div class=\"caption text-center\"> <h3>" + nom + "</h3>" + /* <p>"+description+"</p>*/"<p><a href=\"#"+id+"\" class=\"btn btn-primary\" role=\"button\" id='b"+id+"'>Détails</a></p><p><a href=\"#\" class=\"btn btn-primary\" role=\"button\">Ajouter au panier <span class=\"badge\">" + prix + "</span></a></p></div> </div> </div>";
+                    var res = "<div class=\"col-sm-6 col-md-4 col-lg-4\" id=\"" + id + "\"'> <div class=\"thumbnail\"> <img class=\"img-rounded img-responsive\" src=\"" + prolunch.link + link_pic + "\" alt=\"...\"> <div class=\"caption text-center\"> <h3>" + nom + "</h3>" + /* <p>"+description+"</p>*/"<p><a href=\"#\" class=\"btn btn-primary\" role=\"button\" id='b"+id+"'>Détails</a></p><p><a href=\"#\" class=\"btn btn-primary\" role=\"button\">Ajouter au panier <span class=\"badge\">" + prix + "</span></a></p></div> </div> </div>";
                     $("#container").append(res);
-                    $("#b"+id).click(function(){
+                    $("#b"+id).click(function(e){
+                        e.preventDefault();
                         prolunch.modules.itemManager.service.getResource(prolunch.link+'plats/'+id,prolunch.modules.itemManager.view.displayDescr);
                         //reset le onclick
                         $("#b"+id).unbind("click");
-                        $("#b"+id).click(function(){
+                        $("#b"+id).click(function(e){
+                            e.preventDefault();
                             $('#desc'+id).fadeToggle();
                         });
                     });
