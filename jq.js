@@ -1,7 +1,8 @@
 /**
  * Created by Bruno on 07/03/2016.
  */
-var prolunch = {modules : {}};
+var prolunch = {modules : {},
+                link : "https://webetu.iutnc.univ-lorraine.fr/www/canals5/prolunch/"};
 
 prolunch.modules.itemManager = (function () {
     return {
@@ -15,7 +16,16 @@ prolunch.modules.itemManager = (function () {
         service : (function () {
             return {
                 getResource : function (uri, callback) {
-
+                    $.ajax({
+                        url : uri,
+                        type : 'GET',
+                        dataType : 'json',
+                        success : callback,
+                        xhrFields : {
+                            withCreditentials : true
+                        },
+                        crossDomain : true
+                    })
                 }
             }
         }) (),
@@ -28,9 +38,21 @@ prolunch.modules.itemManager = (function () {
                     /*var description = data.description;*/
                     var prix = data.prix;
                     var link_pic = data.photo.href;
-                    var res = "<div class=\"col-sm-6 col-md-4 col-lg-4\" id=\""+id+"\"'> <div class=\"thumbnail\"> <img class=\"img-rounded img-responsive\" src=\"https://webetu.iutnc.univ-lorraine.fr/www/canals5/prolunch"+link_pic+"\" alt=\"...\"> <div class=\"caption text-center\"> <h3>"+nom+"</h3>"+/* <p>"+description+"</p>*/"<p><a href=\"#\" class=\"btn btn-primary\" role=\"button\">Ajouter au panier <span class=\"badge\">"+prix+"</span></a></p> </div> </div> </div>";
-
+                    var res = "<div class=\"col-sm-6 col-md-4 col-lg-4\" id=\"" + id + "\"'> <div class=\"thumbnail\"> <img class=\"img-rounded img-responsive\" src=\"" + prolunch.link + link_pic + "\" alt=\"...\"> <div class=\"caption text-center\"> <h3>" + nom + "</h3>" + /* <p>"+description+"</p>*/"<p><a href=\"#"+id+"\" class=\"btn btn-primary\" role=\"button\" id='b"+id+"'>Détails</a></p><p><a href=\"#\" class=\"btn btn-primary\" role=\"button\">Ajouter au panier <span class=\"badge\">" + prix + "</span></a></p></div> </div> </div>";
                     $("#container").append(res);
+                    $("#b"+id).click(function(){
+                        prolunch.modules.itemManager.service.getResource(prolunch.link+'plats/'+id,prolunch.modules.itemManager.view.displayDescr);
+                        //reset le onclick
+                        $("#b"+id).unbind("click");
+                        $("#b"+id).click(function(){
+                            $('#desc'+id).fadeToggle();
+                        });
+                    });
+                },
+
+                displayDescr : function(data){
+                    var desc = data.plat.description;
+                    $('#b'+data.plat.id).before("<p id='desc"+data.plat.id+"'>"+desc+"</p>");
                 },
                 displayListe : function (data) {
                     data.forEach(prolunch.modules.itemManager.view.displayPlat);
@@ -42,7 +64,7 @@ prolunch.modules.itemManager = (function () {
 
 
 prolunch.init = function () {
-
+    prolunch.modules.itemManager.service.getResource(prolunch.link+'plats/',prolunch.modules.itemManager.view.displayListe);
 };
 
 var lePlat = {
@@ -806,5 +828,8 @@ var data = [
         },
         "type": "plat"
     }
-]
-prolunch.modules.itemManager.view.displayListe(data);
+];
+//prolunch.modules.itemManager.view.displayListe(data);
+$(document).ready(function(){
+    prolunch.init();
+});
