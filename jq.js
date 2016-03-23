@@ -38,8 +38,8 @@ prolunch.modules.itemManager = (function () {
                     /*var description = data.description;*/
                     var prix = data.prix;
                     var link_pic = data.photo.href;
-                    var res = "<div class=\"col-sm-6 col-md-4 col-lg-4\" id=\"" + id + "\"'> <div class=\"thumbnail\"> <img class=\"img-rounded img-responsive\" src=\"" + prolunch.link + link_pic + "\" alt=\"...\"> <div class=\"caption text-center\"> <h3>" + nom + "</h3>" + /* <p>"+description+"</p>*/"<p><a href=\"#\" class=\"btn btn-primary\" role=\"button\" id='b"+id+"'>Détails</a></p><p><a href=\"#\" class=\"btn btn-primary\" role=\"button\">Ajouter au panier <span class=\"badge\">" + prix + "</span></a></p></div> </div> </div>";
-                    $("#container").append(res);
+                    var res = "<div class=\"col-sm-6 col-md-4 col-lg-4\" id=\"" + id + "\"'> <div class=\"thumbnail\"> <img class=\"img-rounded img-responsive\" src=\"" + prolunch.link + link_pic + "\" alt=\"...\"> <div class=\"caption text-center\"> <h3>" + nom + "</h3>" + /* <p>"+description+"</p>*/"<p><a href=\"#\" class=\"btn btn-primary\" role=\"button\" id='b"+id+"'>Détails</a></p><p><a href=\"#\" class=\"btn btn-primary\" role=\"button\" id='add"+id+"'>Ajouter au panier <span class=\"badge\">" + prix + "€</span></a></p></div> </div> </div>";
+                    $("#list").append(res);
                     $("#b"+id).click(function(e){
                         e.preventDefault();
                         prolunch.modules.itemManager.service.getResource(prolunch.link+'plats/'+id,prolunch.modules.itemManager.view.displayDescr);
@@ -49,6 +49,10 @@ prolunch.modules.itemManager = (function () {
                             e.preventDefault();
                             $('#desc'+id).fadeToggle();
                         });
+                    });
+                    $("#add"+id).click(function(e){
+                        e.preventDefault();
+                        prolunch.modules.itemManager.service.getResource(prolunch.link+'plats/'+id,prolunch.modules.panier.manager.addItem);
                     });
                 },
 
@@ -65,8 +69,129 @@ prolunch.modules.itemManager = (function () {
 }) ();
 
 
+prolunch.modules.panier= (function(){
+    var panier = [];
+    var total =0;
+    return{
+        manager : (function(){
+            return {
+                addItem : function(data){
+                    var id = data.plat.id;
+                    var name = data.plat.nom;
+                    var nb = 1;
+                    var prix = data.plat.prix;
+                    var present = false;
+                    panier.forEach(function(val,i,tab){
+                        if(val.id == id){
+                            present = true;
+                            val.qte++;
+                            total += 1*val.prix;
+                            prolunch.modules.panier.view.majQte(val);
+                        }
+                    });
+                    if(!present){
+                        panier.push({'id': id, 'name': name, 'qte': nb, 'prix': prix});
+                        total += nb * prix;
+                        prolunch.modules.panier.view.displayLine({'id':id,'name':name,'qte':nb,'prix':prix});
+                    }
+
+                    prolunch.modules.panier.view.majTotal();
+                },
+                addOneItem : function(id){
+                    panier.forEach(function(val,i,tab){
+                        if(val.id == id){
+                            val.qte++;
+                            total += 1*val.prix;
+                            prolunch.modules.panier.view.majQte(val);
+                        }
+                    });
+                    prolunch.modules.panier.view.majTotal();
+                },
+                delOneItem : function(id){
+                    var supr = -1;
+                    panier.forEach(function(val,i,tab){
+                        if(val.id == id){
+                            val.qte--;
+                            if(val.qte<=0)supr = i;
+                            total -= 1*val.prix;
+                            prolunch.modules.panier.view.majQte(val);
+                        }
+                    });
+                    if(supr>=0)panier.splice(supr,1);
+                    prolunch.modules.panier.view.majTotal();
+
+                },
+                delItem : function(id){
+                    var supr = -1;
+                    panier.forEach(function(val,i,tab){
+                        if(val.id == id){
+                            supr = i;
+                            total -= val.qte*val.prix;
+                        }
+                        if(supr>=0)panier.splice(supr,1);
+                        prolunch.modules.panier.view.majTotal();
+                    });
+                    $('#panier'+id).remove();
+                }
+            }
+        })(),
+        view : (function(){
+            return {
+                displayLine : function(line){
+                    //line = {'id':id,'name':name,'qte':nb,'prix':prix}
+                    var res = "<div class='col-md-12 col-lg-12 col-sm-12 thumbnail' id='panier"+line.id+"'><div class='col-md-4 col-lg-4 col-sm-6'>"+line.name+"</div><div class='col-md-4 col-lg-4 col-sm-6'><a href=\"#\" class=\"btn btn-primary btn-xs\" role=\"button\" id='delone"+line.id+"'>-</a><span id='qte"+line.id+"'> "+line.qte+" </span><a href=\"#\" class=\"btn btn-primary btn-xs\" role=\"button\" id='addone"+line.id+"'>+</a></div><div class='col-md-4 col-lg-4 col-sm-12'><span>Prix total : <b id='prix"+line.id+"'> "+line.prix*line.qte+" </b> € </span><a href=\"#\" class=\"btn btn-danger btn-xs\" role=\"button\" id='del"+line.id+"'>X</a></div></div>";
+                    $('#contentPanier').append(res);
+                    //ajouter handler aux boutons. (màj infos + lignes): addone+id delone+id del+id
+                    $('#del'+line.id).click(function(e){
+                        e.preventDefault();
+                        prolunch.modules.panier.manager.delItem(line.id);
+                    });
+                    $('#addone'+line.id).click(function(e){
+                        e.preventDefault();
+                        prolunch.modules.panier.manager.addOneItem(line.id);
+                    });
+                    $('#delone'+line.id).click(function(e){
+                        e.preventDefault();
+                        prolunch.modules.panier.manager.delOneItem(line.id);
+                    });
+                },
+                displayPanier : function(){
+                    //hide list
+                    $('#list').fadeToggle();
+                    /*
+                    panier.forEach(function(val,i,tab){
+                       prolunch.modules.panier.view.displayLine(val);
+                    });
+                    */
+                    //show panier
+                    $('#panier').fadeToggle();
+                },
+                majTotal : function() {
+                    $('#totalPanier').text(total);
+                },
+                majQte : function(line){
+                    $('#qte'+line.id).text(" "+line.qte+" ");
+                }
+            }
+        })()
+    }
+})();
+
+
+
+
 prolunch.init = function () {
     prolunch.modules.itemManager.service.getResource(prolunch.link+'plats/',prolunch.modules.itemManager.view.displayListe);
+    $('#panier').fadeToggle();
+    $('#showPanier').click(function(e){
+        e.preventDefault();
+        prolunch.modules.panier.view.displayPanier();
+    });
+    $('#showList').click(function(e){
+        e.preventDefault();
+        $('#panier').fadeToggle();
+        $('#list').fadeToggle();
+    });
 };
 
 var lePlat = {
