@@ -4,34 +4,28 @@
     <meta charset="UTF-8">
     <title>ProLunch</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
-
+    <link rel="icon" href="logo.ico" />
     <link href="css/starter-template.css" rel="stylesheet">
 </head>
 <body>
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
             <a class="navbar-brand" href="#">ProLunch</a>
         </div>
-        <div id="navbar" class="collapse navbar-collapse">
+        <!--<div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li class="active"><a href="#">Accueil</a></li>
             </ul>
-        </div><!--/.nav-collapse -->
+        </div><!--/.nav-collapse --><a style="color: #3c3c3c" href="http://9gag.com">--></a>
     </div>
 </nav>
 
 <div class="container" id="container">
     <div class="jumbotron">
-        <h1> Essai de carte pour les plats </h1>
-        <p> Test pour le TD4, projet qui servira de notation.</p>
-        <h2> ProLunch </h2>
+        <h2> Prolunch : le bon manger de les pros qui bossent même à midi ! </h2>
+        <p> Test pour le TD4-5, projet qui servira de notation.</p>
+        <small> Par : Justin NOEL et Bruno SINTEFF </small>
     </div>
     <div class="row" id="list">
         <div class="col-lg-12 col-md-12 col-sm-12">
@@ -39,14 +33,61 @@
             <h1> La liste des plats: </h1>
         </div>
 
-
     </div>
+
+
     <div class="row" id="panier">
-        <div class="col-lg-12 col-md-12 col-sm-12 thumbnail" id="contentPanier">
+        <div class="col-lg-12 col-md-12 col-sm-12 well" id="contentPanier">
             <a href="#" class="btn btn-success" role="button" id="showList">Menu</a>
+            <a href="#" class="btn btn-success" role="button" id="showCommande">Commander</a>
             <h1> Contenu du panier : <span class="badge"><span id="totalPanier">0</span>€</span></h1>
         </div>
     </div>
+
+
+
+    <div class="row" id="commande">
+        <div class="col-lg-12 col-md-12 col-sm-12 well" id="contentCommande">
+            <h1><small>Votre commande :</small></h1>
+        </div>
+        <div class="col-lg-12 col-md-12 col-sm-12 well" id="formDiv">
+            <h1><small>Identifiants de votre commande :</small></h1>
+            <form class="form-horizontal">
+                <div id="formUserName" class="form-group">
+                    <label for="userName" class="col-sm-4 control-label">Nom d'utilisateur</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="userName" placeholder="User name">
+                    </div>
+                    <span class="help-block" id="helpUserName"></span>
+                </div>
+                <div id="formPwd" class="form-group">
+                    <label for="pwd" class="col-sm-4 control-label">Mot de passe</label>
+                    <div class="col-sm-8">
+                        <input type="password" class="form-control" id="pwd" placeholder="Password">
+                    </div>
+                    <span class="help-block" id="helpPwd"></span>
+                </div>
+                <a class="btn btn-primary" id="send">Envoyez votre commande !</a>
+            </form>
+        </div>
+    </div>
+
+    <div class="row" id="finalCommande">
+        <div class="col-lg-12 col-md-12 col-sm-12 well">
+            <h1><small>Récapitulatif de votre commande :</small></h1>
+            <div class="col-lg-12 col-md-12 col-sm-12 well">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <h2><small>Création à la date : </small><small id="date"></small></h2>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 well" id="contentFinalCommande">
+
+            </div>
+            <a class="btn btn-success" href="#" id="again">Voulez-vous commander à nouveau ?</a>
+        </div>
+
+    </div>
+
 </div>
 
 <script src="https://code.jquery.com/jquery-1.10.0.min.js"></script>
